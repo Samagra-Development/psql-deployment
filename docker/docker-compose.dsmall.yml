@@ -1,0 +1,24 @@
+version: "3"
+
+services:
+  postgres:
+    image: postgres:9.6
+    volumes:
+      - /mnt/mp_psql_data/postgres:/var/lib/postgresql/data
+    environment:
+      POSTGRES_PASSWORD: yoursupersecret
+    ports:
+      - "127.0.0.0:5432:5432"
+  pgbouncer:
+    image: brainsam/pgbouncer
+    environment:
+      DB_HOST: postgres
+      DB_USER: postgres
+      DB_PASSWORD: yoursupersecret
+      DB_port: 5432
+      DEFAULT_POOL_SIZE: 800
+      MAX_CLIENT_CONN: 5000
+      MAX_DB_CONNECTIONS: 60
+      MAX_USER_CONNECTIONS: 20
+    ports:
+      - "0.0.0.0:6432:6432"

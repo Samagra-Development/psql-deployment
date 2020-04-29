@@ -1,0 +1,38 @@
+version: "3"
+
+services:
+  # Data API and authentication/authorization
+
+  postgres:
+    image: postgres:9.6
+    volumes:
+      - /mnt/mp_psql_data/postgres:/var/lib/postgresql/data
+    environment:
+      POSTGRES_PASSWORD: kpiadahibohjkshzobsg
+    ports:
+      - "0.0.0.0:5432:5432"
+  graphql-engine:
+    image: hasura/graphql-engine:v1.1.1
+    ports:
+      - "8080:8080"
+    depends_on:
+      - "postgres"
+    restart: always
+    environment:
+      HASURA_GRAPHQL_DATABASE_URL: postgres://postgres:kpiadahibohjkshzobsg@postgres:5432/postgres
+      HASURA_GRAPHQL_ENABLE_CONSOLE: "true" # set to "false" to disable console
+      HASURA_GRAPHQL_ENABLED_LOG_TYPES: startup, http-log, webhook-log, websocket-log, query-log
+      HASURA_GRAPHQL_ADMIN_SECRET: myadminsecretkey
+  pgbouncer:
+    image: brainsam/pgbouncer
+    environment:
+      DB_HOST: postgres
+      DB_USER: postgres
+      DB_PASSWORD: kpiadahibohjkshzobsg
+      DB_port: 5432
+      DEFAULT_POOL_SIZE: 800
+      MAX_CLIENT_CONN: 5000
+      MAX_DB_CONNECTIONS: 60
+      MAX_USER_CONNECTIONS: 20
+    ports:
+      - "0.0.0.0:6432:6432"
